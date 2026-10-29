@@ -1,0 +1,16 @@
+name: E2E Tests (master/release - merge)
+# Mirror of the upstream e2e-tests-on-merge.yml: workflow_dispatch only.
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        type: string
+        required: true
+
+permissions: {}
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - run: echo "real upstream workflow"
