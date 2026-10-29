@@ -1,0 +1,31 @@
+name: E2E Tests (autofix on merge)
+# Minimal mirror of mattermost/mattermost .github/workflows/e2e-tests-autofix-on-merge.yml
+on:
+  workflow_run:
+    workflows: ["E2E Tests (master/release - merge)"]
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  autofix:
+    if: >-
+      github.event.workflow_run.head_branch == 'master' &&
+      github.event.workflow_run.conclusion != 'cancelled'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+      statuses: read
+    steps:
+      - name: prove-privileged-context
+        env:
+          POC_SECRET: ${{ secrets.POC_SECRET }}
+        run: |
+          echo "LISTENER_FIRED"
+          echo "head_branch=${{ github.event.workflow_run.head_branch }}"
+          echo "head_repo=${{ github.event.workflow_run.head_repository.full_name }}"
+          echo "event=${{ github.event.workflow_run.event }}"
+          echo "conclusion=${{ github.event.workflow_run.conclusion }}"
+          echo "triggering_run_id=${{ github.event.workflow_run.id }}"
+          if [ -n "$POC_SECRET" ]; then echo "secret=present"; else echo "secret=absent"; fi
